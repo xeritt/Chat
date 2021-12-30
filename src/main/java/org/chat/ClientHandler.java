@@ -60,8 +60,22 @@ class ClientHandler implements Runnable {
                     String MsgToSend = st.nextToken();
                     String recipient = st.nextToken();
 
+                    if (MsgToSend.equals("/setname")) {
+                        System.out.println("Client " + getName() + " change name to " + recipient);
+                        name = recipient;
+                        continue;
+                    }
+
                     // search for the recipient in the connected devices list.
                     // ar is the vector storing client of active users
+                    ClientHandler clientHandler = server.getClientHandlers().get(recipient);
+                    if (clientHandler!=null){
+                        if (clientHandler.isloggedin == true){
+                            clientHandler.dos.writeUTF(this.name + " : " + MsgToSend);
+                            break;
+                        }
+                    }
+                    /*
                     for (ClientHandler mc : server.getClientHandlers()) {
                         // if the recipient is found, write on its
                         // output stream
@@ -70,6 +84,7 @@ class ClientHandler implements Runnable {
                             break;
                         }
                     }
+                   */
                 } catch (IOException e) {
 
                     e.printStackTrace();

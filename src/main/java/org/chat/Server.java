@@ -7,12 +7,12 @@ import java.net.*;
 // Server class
 public class Server {
     // Vector to store active clients
-    private Vector<ClientHandler> clientHandlers = new Vector<>();
+    private Map<String, ClientHandler> clientHandlers = new HashMap<>();
     // counter for clients
     static int i = 0;
     private int port = 1234;
 
-    public Vector<ClientHandler> getClientHandlers() {
+    public Map<String, ClientHandler> getClientHandlers() {
         return clientHandlers;
     }
 
@@ -30,15 +30,15 @@ public class Server {
             System.out.println("New client request received : " + s);
             System.out.println("Creating a new handler for this client...");
             // Create a new handler object for handling this request.
-            //ClientHandler mtch = new ClientHandler(s, "client " + i, dis, dos);
-            ClientHandler mtch = new ClientHandler(this, s, "client" + i);
+            //ClientHandler clientHandler = new ClientHandler(s, "client " + i, dis, dos);
+            ClientHandler clientHandler = new ClientHandler(this, s, "client" + i);
             // Create a new Thread with this object.
-            Thread t = new Thread(mtch);
-            System.out.println("Adding " + mtch.getName() + " client to active client list");
+            Thread client = new Thread(clientHandler);
+            System.out.println("Adding " + clientHandler.getName() + " client to active client list");
             // add this client to active clients list
-            clientHandlers.add(mtch);
+            clientHandlers.put(clientHandler.getName(), clientHandler);
             // start the thread.
-            t.start();
+            client.start();
             // increment i for new client.
             // i is used for naming only, and can be replaced
             // by any naming scheme
