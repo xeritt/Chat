@@ -5,7 +5,7 @@ import java.util.*;
 import java.net.*;
 
 // Server class
-public class Server {
+public class Server implements Log{
     // Vector to store active clients
     private Map<String, ClientHandler> clientHandlers = new HashMap<>();
     // counter for clients
@@ -26,22 +26,19 @@ public class Server {
         // client request
         while (true) {
             // Accept the incoming request
-            Socket s = ss.accept();
-            System.out.println("New client request received : " + s);
-            System.out.println("Creating a new handler for this client...");
+            Socket clientSocket = ss.accept();
+            log("New client request received : " + clientSocket);
+            log("Creating a new handler for this client...");
             // Create a new handler object for handling this request.
-            //ClientHandler clientHandler = new ClientHandler(s, "client " + i, dis, dos);
-            ClientHandler clientHandler = new ClientHandler(this, s, "client" + i);
+            //ClientHandler clientHandler = new ClientHandler(clientSocket, "client " + i, dis, dos);
+            ClientHandler clientHandler = new ClientHandler(this, clientSocket, "user" + i);
             // Create a new Thread with this object.
             Thread client = new Thread(clientHandler);
-            System.out.println("Adding " + clientHandler.getName() + " client to active client list");
+            log("Adding " + clientHandler.getName() + " client to active client list");
             // add this client to active clients list
             clientHandlers.put(clientHandler.getName(), clientHandler);
             // start the thread.
             client.start();
-            // increment i for new client.
-            // i is used for naming only, and can be replaced
-            // by any naming scheme
             i++;
 
         }
@@ -51,6 +48,11 @@ public class Server {
     public static void main(String[] args) throws IOException {
         Server server = new Server();
         server.start(args);
+    }
+
+    @Override
+    public void log(String str) {
+        System.out.println(str);
     }
 }
 

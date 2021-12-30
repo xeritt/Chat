@@ -4,11 +4,13 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
 // ClientHandler class
-class ClientHandler implements Runnable {
+class ClientHandler implements Runnable, Log {
     private Scanner scn = new Scanner(System.in);
     private String name;
     private DataInputStream dis;
@@ -49,48 +51,28 @@ class ClientHandler implements Runnable {
 
                     System.out.println(received);
 
-                    if (received.equals("logout")) {
-                        this.isloggedin = false;
-                        this.s.close();
-                        break;
-                    }
+                    if (logoutCommand(received)) break;
 
                     // break the string into message and recipient part
                     StringTokenizer st = new StringTokenizer(received, "#");
                     String MsgToSend = st.nextToken();
                     String recipient = st.nextToken();
 
-                    if (MsgToSend.equals("/setname")) {
-                        System.out.println("Client " + getName() + " change name to " + recipient);
-                        name = recipient;
-                        continue;
-                    }
+                    if (setNameCommand(MsgToSend, recipient)) continue;
 
                     // search for the recipient in the connected devices list.
                     // ar is the vector storing client of active users
                     ClientHandler clientHandler = server.getClientHandlers().get(recipient);
-                    if (clientHandler!=null){
-                        if (clientHandler.isloggedin == true){
-                            clientHandler.dos.writeUTF(this.name + " : " + MsgToSend);
-                            break;
-                        }
-                    }
-                    /*
-                    for (ClientHandler mc : server.getClientHandlers()) {
-                        // if the recipient is found, write on its
-                        // output stream
-                        if (mc.name.equals(recipient) && mc.isloggedin == true) {
-                            mc.dos.writeUTF(this.name + " : " + MsgToSend);
-                            break;
-                        }
-                    }
-                   */
+                    if (clientHandler==null) continue;
+                    if (clientHandler.isloggedin == false) continue;
+                    clientHandler.dos.writeUTF(this.name + " : " + MsgToSend);
+               } catch (NoSuchElementException e){
+                    log("Error input!!!");
                 } catch (IOException e) {
-
                     e.printStackTrace();
                     isloggedin = false;
                     s.close();
-                    System.out.println("Client: " + getName() + " disconected.");
+                    log("Client: " + getName() + " disconected.");
                     break;
                 }
 
@@ -99,5 +81,33 @@ class ClientHandler implements Runnable {
             e.printStackTrace();
         }
 
+    }
+
+    private boolean setNameCommand(String MsgToSend, String recipient) {
+        if (MsgToSend.equals("/setname")) {
+            String oldName = name;
+            name = recipient;
+            Map<String, ClientHandler> clients = server.getClientHandlers();
+            synchronized(clients){
+                clients.remove(this);
+                clients.put(name, this);
+            }
+            log("Client " + oldName + " change name to " + getName());
+            return true;
+        }
+        return false;
+    }
+
+    private boolean logoutCommand(String received) throws IOException {
+        if (received.equals("logout")) {
+            this.isloggedin = false;
+            this.s.close();
+            return true;
+        }
+        return false;
+    }
+
+    public void log(String str){
+        System.out.println(str);
     }
 }
