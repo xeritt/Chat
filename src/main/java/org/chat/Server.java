@@ -5,7 +5,7 @@ import java.util.*;
 import java.net.*;
 
 // Server class
-public class Server implements Log{
+public class Server implements Log {
     // Vector to store active clients
     private Map<String, ClientHandler> clientHandlers = new HashMap<>();
     // counter for clients
@@ -19,7 +19,7 @@ public class Server implements Log{
     public void start(String[] args) throws IOException {
         // server is listening on port 1234
         if (args.length > 0) {
-            port  = Integer.valueOf(args[0]);
+            port = Integer.valueOf(args[0]);
         }
         ServerSocket ss = new ServerSocket(port);
         // running infinite loop for getting
@@ -50,9 +50,5 @@ public class Server implements Log{
         server.start(args);
     }
 
-    @Override
-    public void log(String str) {
-        System.out.println(str);
-    }
 }
 

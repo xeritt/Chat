@@ -48,11 +48,8 @@ class ClientHandler implements Runnable, Log {
                 try {
                     // receive the string
                     received = dis.readUTF();
-
-                    System.out.println(received);
-
+                    log(received);
                     if (logoutCommand(received)) break;
-
                     // break the string into message and recipient part
                     StringTokenizer st = new StringTokenizer(received, "#");
                     String MsgToSend = st.nextToken();
@@ -63,9 +60,11 @@ class ClientHandler implements Runnable, Log {
                     // search for the recipient in the connected devices list.
                     // ar is the vector storing client of active users
                     ClientHandler clientHandler = server.getClientHandlers().get(recipient);
-                    if (clientHandler==null) continue;
+                    if (clientHandler == null) continue;
                     if (clientHandler.isloggedin == false) continue;
+
                     clientHandler.dos.writeUTF(this.name + " : " + MsgToSend);
+
                } catch (NoSuchElementException e){
                     log("Error input!!!");
                 } catch (IOException e) {
@@ -105,9 +104,5 @@ class ClientHandler implements Runnable, Log {
             return true;
         }
         return false;
-    }
-
-    public void log(String str){
-        System.out.println(str);
     }
 }
