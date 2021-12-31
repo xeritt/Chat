@@ -15,7 +15,7 @@ class ClientHandler implements Runnable, Log {
     private String name;
     private DataInputStream dis;
     private DataOutputStream dos;
-    private Socket s;
+    private Socket socket;
     private boolean isloggedin;
     private Server server;
 
@@ -23,25 +23,25 @@ class ClientHandler implements Runnable, Log {
         return name;
     }
 
-    public ClientHandler(Socket s, String name) throws IOException {
+    public ClientHandler(Socket socket, String name) throws IOException {
         // obtain input and output streams
         this.name = name;
-        this.s = s;
+        this.socket = socket;
         this.isloggedin = true;
     }
 
-    public ClientHandler(Server server, Socket s, String name) throws IOException {
+    public ClientHandler(Server server, Socket socket, String name) throws IOException {
         // obtain input and output streams
         this.name = name;
-        this.s = s;
+        this.socket = socket;
         this.server = server;
         this.isloggedin = true;
     }
 
     @Override
     public void run() {
-        try (DataInputStream dis = new DataInputStream(s.getInputStream());
-             DataOutputStream dos = new DataOutputStream(s.getOutputStream())) {
+        try (DataInputStream dis = new DataInputStream(socket.getInputStream());
+             DataOutputStream dos = new DataOutputStream(socket.getOutputStream())) {
 
             String received;
             while (true) {
@@ -70,7 +70,7 @@ class ClientHandler implements Runnable, Log {
                 } catch (IOException e) {
                     e.printStackTrace();
                     isloggedin = false;
-                    s.close();
+                    socket.close();
                     log("Client: " + getName() + " disconected.");
                     break;
                 }
@@ -99,8 +99,8 @@ class ClientHandler implements Runnable, Log {
 
     private boolean logoutCommand(String received) throws IOException {
         if (received.equals("logout")) {
-            this.isloggedin = false;
-            this.s.close();
+            isloggedin = false;
+            socket.close();
             return true;
         }
         return false;

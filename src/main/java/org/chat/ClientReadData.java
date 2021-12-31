@@ -6,6 +6,7 @@ import java.net.Socket;
 public class ClientReadData implements Runnable, Log{
 
     private Socket s;
+    public boolean fRun = true;
 
     public ClientReadData(Socket s) {
         this.s = s;
@@ -15,14 +16,15 @@ public class ClientReadData implements Runnable, Log{
     public void run() {
         try (DataInputStream dis = new DataInputStream(s.getInputStream())) {
             // read the message sent to this client
-            while (true) {
+            while (fRun) {
                 String msg = dis.readUTF();
                 log(msg);
             }
         } catch (IOException e) {
             e.printStackTrace();
             log("Error write data");
-            System.exit(1);
+            fRun = false;
+            //System.exit(1);
         }
 
     }

@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 public class ClientWriteData implements Runnable, Log{
     private Socket s;
+    public boolean fRun = true;
 
     public ClientWriteData(Socket s) {
         this.s = s;
@@ -17,7 +18,7 @@ public class ClientWriteData implements Runnable, Log{
         try (DataOutputStream dos = new DataOutputStream(s.getOutputStream())) {
             Scanner scn = new Scanner(System.in);
             // read the message to deliver.
-            while (true) {
+            while (fRun) {
                 String msg = scn.nextLine();
                 try {
                     // write on the output stream
@@ -25,14 +26,16 @@ public class ClientWriteData implements Runnable, Log{
                 } catch (IOException e) {
                     e.printStackTrace();
                     log("Error read data");
-                    System.exit(1);
+                    fRun = false;
+                    //System.exit(1);
                     //break;
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
             log("Error with data stream");
-            System.exit(1);
+            //System.exit(1);
+            fRun = false;
         }
 
     }
