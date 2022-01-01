@@ -1,13 +1,32 @@
 package org.chat.gui;
 
+import org.chat.Client;
+import org.chat.ClientWriteData;
+
 import javax.swing.*;
 import java.awt.event.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class CommonChat extends JDialog {
     private JPanel contentPane;
     private JButton buttonSend;
     private JTextField inputText;
     private JTextArea chatText;
+
+    private DataOutputStream dos;
+    public DataOutputStream getDos() {
+        return dos;
+    }
+    public void setDos(DataOutputStream dos) {
+        this.dos = dos;
+    }
+
+    public void appendChatText(String text) {
+        this.chatText.append(text + '\n');
+    }
+
+
   //  private JButton buttonCancel;
 
     public CommonChat() {
@@ -28,7 +47,7 @@ public class CommonChat extends JDialog {
         });
 */
         // call onCancel() when cross is clicked
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(HIDE_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 onCancel();
@@ -46,15 +65,24 @@ public class CommonChat extends JDialog {
     }
 
     private void onSend() {
-        chatText.append(inputText.getText() + '\n');
-        inputText.setText("");
+        //ClientWriteData.write(Client.clientSocket, inputText.getText());
+        try {
+            dos.writeUTF(inputText.getText());
+            chatText.append(inputText.getText() + '\n');
+            inputText.setText("");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         // add your code here
         //dispose();
     }
 
     private void onCancel() {
         // add your code here if necessary
-        dispose();
+        //dispose();
+        setVisible(false);
     }
 
     public static void main(String[] args) {

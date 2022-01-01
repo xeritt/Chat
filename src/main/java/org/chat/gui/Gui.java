@@ -4,6 +4,11 @@ import java.awt.*;
 
 public class Gui {
     private final TrayIcon trayIcon;
+    private CommonChat commonChat = new CommonChat();
+
+    public CommonChat getCommonChat() {
+        return commonChat;
+    }
 
     public Gui() {
         System.out.println("Gui const");
@@ -36,8 +41,8 @@ public class Gui {
 
         MenuItem form = new MenuItem("Chat");
         form.addActionListener(e->{
-            CommonChat dialog = new CommonChat();
-            dialog.setVisible(true);
+            //CommonChat dialog = new CommonChat();
+            commonChat.setVisible(true);
         });
         popup.add(form);
 

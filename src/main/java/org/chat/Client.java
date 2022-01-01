@@ -6,13 +6,16 @@ import java.net.*;
 
 public class Client implements Log, Runnable {
     public static final int SLEEP = 5000;
+    private Socket clientSocket = null;
+    //public DataOutputStream dos = null;
+
     private int ServerPort = 1234;
     private Thread sendMessage;
     private Thread readMessage;
     private InetAddress ip = null;
     private boolean fConnected = false;
     private String[] args = null;
-    Gui gui = new Gui();
+    private Gui gui = new Gui();
 
     public Client(String[] args) {
         this.args = args;
@@ -40,7 +43,6 @@ public class Client implements Log, Runnable {
 
     @Override
     public void run() {
-        Socket clientSocket = null;
         ClientReadData readData = null;
         ClientWriteData writeData = null;
 
@@ -50,23 +52,25 @@ public class Client implements Log, Runnable {
                 if (fConnected == false) {
                     log("Try to connect...");
                     clientSocket = connect(args);
-
-                    readData = new ClientReadData(clientSocket);
-                    writeData = new ClientWriteData(clientSocket);
-                    sendMessage = new Thread(writeData);
+                    DataOutputStream dos = new DataOutputStream(clientSocket.getOutputStream());
+                    gui.getCommonChat().setDos(dos);
+                    readData = new ClientReadData(clientSocket, gui);
+                    //writeData = new ClientWriteData(clientSocket, gui);
+                    //sendMessage = new Thread(writeData);
                     readMessage = new Thread(readData);
-                    sendMessage.start();
+                    //sendMessage.start();
                     readMessage.start();
                 }
 
                 Thread.sleep(SLEEP);
 
-                if (readData.fRun == false || writeData.fRun == false) {
+                if (readData.fRun == false/* || writeData.fRun == false*/) {
                     readData.fRun = false;
-                    writeData.fRun = false;
-                    //readData.stop();
-                    writeData.stop();
+                    //writeData.fRun = false;
+                    readData.stop();
+                    //writeData.stop();
                     fConnected = false;
+                    gui.getCommonChat().getDos().close();
                     log("Disconnected.");
                 }
 

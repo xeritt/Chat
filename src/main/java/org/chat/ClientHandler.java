@@ -42,7 +42,8 @@ class ClientHandler implements Runnable, Log {
     public void run() {
         try (DataInputStream dis = new DataInputStream(socket.getInputStream());
              DataOutputStream dos = new DataOutputStream(socket.getOutputStream())) {
-
+            this.dos = dos;
+            this.dis = dis;
             String received;
             while (true) {
                 try {
@@ -66,11 +67,12 @@ class ClientHandler implements Runnable, Log {
                     clientHandler.dos.writeUTF(this.name + " : " + MsgToSend);
 
                } catch (NoSuchElementException e){
-                    log("Error input!!!");
+                    log("Error input!");
                 } catch (IOException e) {
                     e.printStackTrace();
                     isloggedin = false;
                     socket.close();
+                    server.getClientHandlers().remove(this);
                     log("Client: " + getName() + " disconected.");
                     break;
                 }
