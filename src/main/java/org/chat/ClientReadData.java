@@ -12,6 +12,10 @@ public class ClientReadData implements Runnable, Log{
         this.s = s;
     }
 
+    public void stop() {
+        fRun = false;
+    }
+
     @Override
     public void run() {
         try (DataInputStream dis = new DataInputStream(s.getInputStream())) {
@@ -22,11 +26,11 @@ public class ClientReadData implements Runnable, Log{
             }
         } catch (IOException e) {
             e.printStackTrace();
-            log("Error write data");
+            log("Error read data");
             fRun = false;
             //System.exit(1);
         }
-
+        log("Stop read data");
     }
 
 }

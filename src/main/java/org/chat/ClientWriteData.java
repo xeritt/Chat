@@ -7,28 +7,32 @@ import java.util.Scanner;
 public class ClientWriteData implements Runnable, Log{
     private Socket s;
     public boolean fRun = true;
+    private Scanner scanner;
 
     public ClientWriteData(Socket s) {
         this.s = s;
+    }
+
+    public void stop(){
+        fRun = false;
+        scanner.close();
     }
 
     @Override
     public void run() {
 
         try (DataOutputStream dos = new DataOutputStream(s.getOutputStream())) {
-            Scanner scn = new Scanner(System.in);
-            // read the message to deliver.
+            scanner = new Scanner(System.in);
             while (fRun) {
-                String msg = scn.nextLine();
+                // read the message to deliver.
+                String msg = scanner.nextLine();
                 try {
                     // write on the output stream
                     dos.writeUTF(msg);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    log("Error read data");
+                    log("Error write data");
                     fRun = false;
-                    //System.exit(1);
-                    //break;
                 }
             }
         } catch (IOException e) {
@@ -37,7 +41,7 @@ public class ClientWriteData implements Runnable, Log{
             //System.exit(1);
             fRun = false;
         }
-
+        log("Stop write data");
     }
 
 }

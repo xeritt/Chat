@@ -1,5 +1,6 @@
 package org.chat;
 
+import org.chat.gui.Gui;
 import java.io.*;
 import java.net.*;
 
@@ -11,6 +12,7 @@ public class Client implements Log, Runnable {
     private InetAddress ip = null;
     private boolean fConnected = false;
     private String[] args = null;
+    Gui gui = new Gui();
 
     public Client(String[] args) {
         this.args = args;
@@ -62,6 +64,8 @@ public class Client implements Log, Runnable {
                 if (readData.fRun == false || writeData.fRun == false) {
                     readData.fRun = false;
                     writeData.fRun = false;
+                    //readData.stop();
+                    writeData.stop();
                     fConnected = false;
                     log("Disconnected.");
                 }
