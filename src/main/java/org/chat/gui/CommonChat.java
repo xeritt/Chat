@@ -1,9 +1,6 @@
 package org.chat.gui;
-
-import org.chat.Client;
-import org.chat.ClientWriteData;
-
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -62,6 +59,15 @@ public class CommonChat extends JDialog {
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         pack();
+        setOnCenter();
+    }
+
+    private void setOnCenter(){
+        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        final int width = screenSize.width / 2;
+        final int height = screenSize.height / 2;
+        setSize(width, height);
+        setLocation(width - getWidth() / 2, height - getHeight() / 2);
     }
 
     private void onSend() {

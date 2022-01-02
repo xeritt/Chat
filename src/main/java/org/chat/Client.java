@@ -7,10 +7,7 @@ import java.net.*;
 public class Client implements Log, Runnable {
     public static final int SLEEP = 5000;
     private Socket clientSocket = null;
-    //public DataOutputStream dos = null;
-
     private int ServerPort = 1234;
-    private Thread sendMessage;
     private Thread readMessage;
     private InetAddress ip = null;
     private boolean fConnected = false;
@@ -22,8 +19,8 @@ public class Client implements Log, Runnable {
     }
 
     public static void main(String args[]) throws IOException {
-        Thread client = new Thread(new Client(args));
-        client.start();
+        Thread clientThread = new Thread(new Client(args));
+        clientThread.start();
     }
 
     public Socket connect(String[] args) throws IOException {
@@ -44,45 +41,39 @@ public class Client implements Log, Runnable {
     @Override
     public void run() {
         ClientReadData readData = null;
-        ClientWriteData writeData = null;
-
         while (true) {
             try {
-
                 if (fConnected == false) {
                     log("Try to connect...");
                     clientSocket = connect(args);
                     DataOutputStream dos = new DataOutputStream(clientSocket.getOutputStream());
                     gui.getCommonChat().setDos(dos);
                     readData = new ClientReadData(clientSocket, gui);
-                    //writeData = new ClientWriteData(clientSocket, gui);
-                    //sendMessage = new Thread(writeData);
                     readMessage = new Thread(readData);
-                    //sendMessage.start();
                     readMessage.start();
                 }
 
                 Thread.sleep(SLEEP);
 
-                if (readData.fRun == false/* || writeData.fRun == false*/) {
-                    readData.fRun = false;
-                    //writeData.fRun = false;
-                    readData.stop();
-                    //writeData.stop();
+                if (readData.fRun == false) {
                     fConnected = false;
                     gui.getCommonChat().getDos().close();
                     log("Disconnected.");
                 }
 
             } catch (IOException e) {
+
                 e.printStackTrace();
+                log("Error with connection.");
                 try {
                     Thread.sleep(SLEEP);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
+                    log("Sleep interrapted");
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                log("Sleep interrapted");
             }
         }
     }
