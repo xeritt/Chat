@@ -51,6 +51,7 @@ public class Client implements Log, Runnable {
                     readData = new ClientReadData(clientSocket, gui);
                     readMessage = new Thread(readData);
                     readMessage.start();
+                    gui.setStatus(gui.CONNECTED);
                 }
 
                 Thread.sleep(SLEEP);
@@ -58,6 +59,7 @@ public class Client implements Log, Runnable {
                 if (readData.fRun == false) {
                     fConnected = false;
                     gui.getCommonChat().getDos().close();
+                    gui.setStatus(gui.DISCONECTED);
                     log("Disconnected.");
                 }
 

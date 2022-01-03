@@ -7,15 +7,25 @@ import dorkbox.systemTray.SystemTray;
 /**
  * dorkbox.systemTray.SystemTray
  * https://github.undefined.moe/dorkbox/SystemTray/tree/master/src9
+ * https://github.com/dorkbox/SystemTray
  */
 
 public class Gui {
+    public static final String FREE_CHAT = "Free Chat";
+    public static String DISCONECTED = "Disconected";
+    public static String CONNECTED = "Connected";
     public  final String LOGO_PNG = "/logo2.png";
     private final SystemTray tray;
+
     private CommonChat commonChat = new CommonChat();
 
     public CommonChat getCommonChat() {
         return commonChat;
+    }
+
+    public void setStatus(String status) {
+      //  this.status = status;
+        this.tray.setStatus(status);
     }
 
     public Gui() {
@@ -25,6 +35,8 @@ public class Gui {
         Image image = Toolkit.getDefaultToolkit()
                .createImage(getClass().getResource(LOGO_PNG));
         tray.setImage(image);
+        //tray.setTooltip(FREE_CHAT);
+        tray.setStatus(DISCONECTED);
         setMenu();
     }
 
