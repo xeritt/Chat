@@ -10,6 +10,7 @@ public class CommonChat extends JDialog {
     private JButton buttonSend;
     private JTextField inputText;
     private JTextArea chatText;
+    public final String FREE_CHAT = "Free Chat";
 
     private DataOutputStream dos;
     public DataOutputStream getDos() {
@@ -58,6 +59,7 @@ public class CommonChat extends JDialog {
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
+        setTitle(FREE_CHAT);
         pack();
         setOnCenter();
     }

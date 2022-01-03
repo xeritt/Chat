@@ -11,10 +11,10 @@ import dorkbox.systemTray.SystemTray;
  */
 
 public class Gui {
-    public static final String FREE_CHAT = "Free Chat";
-    public static String DISCONECTED = "Disconected";
-    public static String CONNECTED = "Connected";
-    public  final String LOGO_PNG = "/logo2.png";
+    public final String DISCONECTED = "Disconected";
+    public final String CONNECTED = "Connected";
+    public final String LOGO_OFFLINE = "/logo_offline.png";
+    public final String LOGO_ONLINE = "/logo_online.png";
     private final SystemTray tray;
 
     private CommonChat commonChat = new CommonChat();
@@ -32,12 +32,16 @@ public class Gui {
         System.out.println("Gui const");
         tray = SystemTray.get();
         tray.installShutdownHook();
-        Image image = Toolkit.getDefaultToolkit()
-               .createImage(getClass().getResource(LOGO_PNG));
-        tray.setImage(image);
+        setLogo(LOGO_OFFLINE);
         //tray.setTooltip(FREE_CHAT);
         tray.setStatus(DISCONECTED);
         setMenu();
+    }
+
+    public void setLogo(String logo) {
+        Image image = Toolkit.getDefaultToolkit()
+               .createImage(getClass().getResource(logo));
+        tray.setImage(image);
     }
 
     public void setMenu(){
