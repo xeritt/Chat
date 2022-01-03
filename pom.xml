@@ -13,5 +13,13 @@
         <maven.compiler.target>16</maven.compiler.target>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.dorkbox</groupId>
+            <artifactId>SystemTray</artifactId>
+            <version>4.1</version>
+        </dependency>
+    </dependencies>
+
 
 </project>
