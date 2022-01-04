@@ -24,7 +24,6 @@ public class Gui {
     }
 
     public void setStatus(String status) {
-      //  this.status = status;
         this.tray.setStatus(status);
     }
 
@@ -33,7 +32,6 @@ public class Gui {
         tray = SystemTray.get();
         tray.installShutdownHook();
         setLogo(LOGO_OFFLINE);
-        //tray.setTooltip(FREE_CHAT);
         tray.setStatus(DISCONECTED);
         setMenu();
     }
@@ -48,13 +46,14 @@ public class Gui {
         JMenu menu = new JMenu("Main menu");
 
         JMenuItem about = new JMenuItem("About");
-        about.addActionListener(e->{System.exit(0);});
+        about.addActionListener(e->{
+            showNotification("This is free chat. ");
+        });
         menu.add(about);
 
         JMenuItem form = new JMenuItem("Chat");
         form.addActionListener(e->{
-            //CommonChat dialog = new CommonChat();
-            commonChat.setVisible(true);
+                commonChat.setVisible(true);
         });
         menu.add(form);
 
@@ -63,5 +62,11 @@ public class Gui {
         menu.add(exit);
 
         tray.setMenu(menu);
+    }
+
+    public void showNotification(String text) {
+        for (int i = 0; i < 20; i++) {
+            Toast.showToast(i + text);
+        }
     }
 }

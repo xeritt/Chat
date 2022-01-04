@@ -29,7 +29,7 @@ public class CommonChat extends JDialog {
 
     public CommonChat() {
         setContentPane(contentPane);
-        setModal(true);
+        setModal(false);
         getRootPane().setDefaultButton(buttonSend);
 
         buttonSend.addActionListener(new ActionListener() {
@@ -58,10 +58,10 @@ public class CommonChat extends JDialog {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
         setTitle(FREE_CHAT);
         pack();
         setOnCenter();
+        System.out.println("Chat constructor");
     }
 
     private void setOnCenter(){
@@ -93,8 +93,8 @@ public class CommonChat extends JDialog {
         setVisible(false);
     }
 
-    public static void main(String[] args) {
-        CommonChat dialog = new CommonChat();
-        dialog.setVisible(true);
-    }
+//    public static void main(String[] args) {
+//        CommonChat dialog = new CommonChat();
+//        dialog.setVisible(true);
+//    }
 }

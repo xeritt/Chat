@@ -1,5 +1,6 @@
 package org.chat;
 import org.chat.gui.Gui;
+import org.chat.gui.Toast;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -27,6 +28,7 @@ public class ClientReadData implements Runnable, Log{
             while (fRun) {
                 String msg = dis.readUTF();
                 gui.getCommonChat().appendChatText(msg);
+                Toast.showToast(msg);
                 log(msg);
             }
         } catch (IOException e) {
