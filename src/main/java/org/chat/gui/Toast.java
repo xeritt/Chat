@@ -86,9 +86,8 @@ public class Toast extends JWindow implements Runnable{
        // heightText = this.getGraphics().getFontMetrics().getHeight();
         setLocation(x, y + count*heightText);
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
         setSize(widthText + 20, heightText);
-        System.out.println(widthText);
+        //System.out.println(widthText);
         count++;
         if ((y + count*heightText) > screenSize.height){
             count = 0;

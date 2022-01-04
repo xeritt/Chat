@@ -28,7 +28,9 @@ public class ClientReadData implements Runnable, Log{
             while (fRun) {
                 String msg = dis.readUTF();
                 gui.getCommonChat().appendChatText(msg);
-                Toast.showToast(msg);
+                if (gui.getCommonChat().isVisible()==false) {
+                    Toast.showToast(msg);
+                }
                 log(msg);
             }
         } catch (IOException e) {
