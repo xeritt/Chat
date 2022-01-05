@@ -1,4 +1,5 @@
 package org.chat.gui;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -6,16 +7,18 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class CommonChat extends JDialog {
-    private JPanel contentPane;
-    private JButton buttonSend;
-    private JTextField inputText;
-    private JTextArea chatText;
+    private JPanel contentPane  = new JPanel();
+    private JButton buttonSend = new JButton("Send");
+    private JTextField inputText = new JTextField();
+    private JTextArea chatText = new JTextArea();
     public final String FREE_CHAT = "Free Chat";
 
     private DataOutputStream dos;
+
     public DataOutputStream getDos() {
         return dos;
     }
+
     public void setDos(DataOutputStream dos) {
         this.dos = dos;
     }
@@ -25,9 +28,20 @@ public class CommonChat extends JDialog {
     }
 
 
-  //  private JButton buttonCancel;
+    //  private JButton buttonCancel;
 
     public CommonChat() {
+        contentPane.setLayout(new BorderLayout());
+        //chatText.set
+        contentPane.add(chatText, BorderLayout.CENTER);
+
+        JPanel bottom = new JPanel();
+        bottom.setLayout(new BorderLayout());
+
+        bottom.add(inputText, BorderLayout.CENTER);
+        bottom.add(buttonSend, BorderLayout.EAST);
+        contentPane.add(bottom, BorderLayout.SOUTH);
+
         setContentPane(contentPane);
         setModal(false);
         getRootPane().setDefaultButton(buttonSend);
@@ -64,7 +78,7 @@ public class CommonChat extends JDialog {
         System.out.println("Chat constructor");
     }
 
-    private void setOnCenter(){
+    private void setOnCenter() {
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         final int width = screenSize.width / 2;
         final int height = screenSize.height / 2;
@@ -93,8 +107,5 @@ public class CommonChat extends JDialog {
         setVisible(false);
     }
 
-//    public static void main(String[] args) {
-//        CommonChat dialog = new CommonChat();
-//        dialog.setVisible(true);
-//    }
+
 }
