@@ -47,7 +47,8 @@ public class Gui {
 
         JMenuItem about = new JMenuItem("About");
         about.addActionListener(e->{
-            showNotification("This is free chat. ");
+            //showNotification("This is free chat. ");
+            Toast.showToast("Information","This is free chat.", 5000);
         });
         menu.add(about);
 
@@ -62,11 +63,5 @@ public class Gui {
         menu.add(exit);
 
         tray.setMenu(menu);
-    }
-
-    public void showNotification(String text) {
-        for (int i = 0; i < 20; i++) {
-            Toast.showToast(i + text);
-        }
     }
 }

@@ -29,7 +29,7 @@ public class ClientReadData implements Runnable, Log{
                 String msg = dis.readUTF();
                 gui.getCommonChat().appendChatText(msg);
                 if (gui.getCommonChat().isVisible()==false) {
-                    Toast.showToast(msg);
+                    Toast.showToast("Message", msg, 5000);
                 }
                 log(msg);
             }
