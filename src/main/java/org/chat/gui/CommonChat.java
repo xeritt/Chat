@@ -5,6 +5,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class CommonChat extends JDialog {
     private JPanel contentPane  = new JPanel();
@@ -27,6 +30,18 @@ public class CommonChat extends JDialog {
         this.chatText.append(text + '\n');
     }
 
+    public void appendTimeText(String text) {
+        //Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("[MM/dd HH:mm] ");
+        String date = dateFormat.format(new Date());
+        /*Calendar cal = Calendar.getInstance();
+        int h = cal.get(Calendar.HOUR_OF_DAY);
+        int m = cal.get(Calendar.MINUTE);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int month = cal.get(Calendar.MONTH);
+        String date = "["+ month + " / " + day + " " + h + ":" + m +"]";*/
+        this.chatText.append(date + text + '\n');
+    }
 
     //  private JButton buttonCancel;
 
@@ -90,7 +105,8 @@ public class CommonChat extends JDialog {
         //ClientWriteData.write(Client.clientSocket, inputText.getText());
         try {
             dos.writeUTF(inputText.getText());
-            chatText.append(inputText.getText() + '\n');
+            //chatText.append(inputText.getText() + '\n');
+            appendTimeText(inputText.getText());
             inputText.setText("");
 
         } catch (IOException e) {

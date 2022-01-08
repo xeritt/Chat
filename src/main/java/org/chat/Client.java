@@ -30,7 +30,7 @@ public class Client implements Log, Runnable {
         if (args.length > 1) {
             ip = InetAddress.getByName(args[1]);
         } else {
-            ip = InetAddress.getByName("localhost");
+            ip = InetAddress.getByName("82.202.172.104");
         }
         Socket clientSocket = new Socket(ip, ServerPort);
         fConnected = true;
