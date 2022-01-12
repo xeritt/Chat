@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
@@ -31,27 +30,25 @@ public class CommonChat extends JDialog {
     }
 
     public void appendTimeText(String text) {
-        //Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("[MM/dd HH:mm] ");
         String date = dateFormat.format(new Date());
-        /*Calendar cal = Calendar.getInstance();
-        int h = cal.get(Calendar.HOUR_OF_DAY);
-        int m = cal.get(Calendar.MINUTE);
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        int month = cal.get(Calendar.MONTH);
-        String date = "["+ month + " / " + day + " " + h + ":" + m +"]";*/
         this.chatText.append(date + text + '\n');
     }
 
-    //  private JButton buttonCancel;
-
     public CommonChat() {
         contentPane.setLayout(new BorderLayout());
-        //chatText.set
-        contentPane.add(chatText, BorderLayout.CENTER);
+        chatText.setAutoscrolls(true);
+        chatText.setEditable(false);
+
+        JScrollPane scroll = new JScrollPane (chatText);
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+        contentPane.add(scroll, BorderLayout.CENTER);
 
         JPanel bottom = new JPanel();
         bottom.setLayout(new BorderLayout());
+
 
         bottom.add(inputText, BorderLayout.CENTER);
         bottom.add(buttonSend, BorderLayout.EAST);
@@ -102,26 +99,18 @@ public class CommonChat extends JDialog {
     }
 
     private void onSend() {
-        //ClientWriteData.write(Client.clientSocket, inputText.getText());
         try {
             dos.writeUTF(inputText.getText());
-            //chatText.append(inputText.getText() + '\n');
             appendTimeText(inputText.getText());
             inputText.setText("");
-
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        // add your code here
-        //dispose();
     }
 
     private void onCancel() {
-        // add your code here if necessary
-        //dispose();
         setVisible(false);
     }
-
 
 }
