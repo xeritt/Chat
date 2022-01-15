@@ -3,6 +3,7 @@ package org.chat.gui;
 import javax.swing.*;
 import java.awt.*;
 import dorkbox.systemTray.SystemTray;
+import org.drjekyll.fontchooser.FontDialog;
 
 /**
  * dorkbox.systemTray.SystemTray
@@ -58,6 +59,42 @@ public class Gui {
         });
         menu.add(form);
 
+        JMenu propMenu = new JMenu("Properties");
+        menu.add(propMenu);
+
+        JMenuItem prop = new JMenuItem("Set Font");
+        prop.addActionListener(e->{
+            FontDialog.showDialog(commonChat.getChatText());
+        });
+        propMenu.add(prop);
+
+        JMenuItem color = new JMenuItem("Set User Color");
+        color.addActionListener(e->{
+            Color newColor = JColorChooser.showDialog(
+                    commonChat,
+                    "Choose User Color",
+                    commonChat.getUserColor()
+                    );
+            if (newColor != null) {
+                commonChat.setUserColor(newColor);
+            }
+        });
+        propMenu.add(color);
+        
+        JMenuItem textColor = new JMenuItem("Set Text Color");
+        textColor.addActionListener(e->{
+            Color newColor = JColorChooser.showDialog(
+                    commonChat,
+                    "Choose Color",
+                    commonChat.getTextColor()
+            );
+            if (newColor != null) {
+                commonChat.setTextColor(newColor);
+            }
+        });
+        propMenu.add(textColor);
+
+        
         JMenuItem exit = new JMenuItem("Exit");
         exit.addActionListener(e->{System.exit(0);});
         menu.add(exit);

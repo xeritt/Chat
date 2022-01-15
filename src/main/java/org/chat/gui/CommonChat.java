@@ -1,6 +1,7 @@
 package org.chat.gui;
 
 import javax.swing.*;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.DataOutputStream;
@@ -9,30 +10,75 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 
 public class CommonChat extends JDialog {
-    private JPanel contentPane  = new JPanel();
+    private JPanel contentPane = new JPanel();
     private JButton buttonSend = new JButton("Send");
     private JTextField inputText = new JTextField();
-    private JTextArea chatText = new JTextArea();
-    public final String FREE_CHAT = "Free Chat";
+    //private JTextArea chatText = new JTextArea();
+    private JTextPane chatText = new JTextPane();
+    private Color textColor = Color.BLACK;
+    private Color userColor = Color.RED;
 
+    public final String FREE_CHAT = "Free Chat";
     private DataOutputStream dos;
 
     public DataOutputStream getDos() {
         return dos;
     }
 
+    public void setTextColor(Color textColor) {
+        this.textColor = textColor;
+    }
+
+    public void setUserColor(Color userColor) {
+        this.userColor = userColor;
+    }
+
+    public JTextPane getChatText() {
+        return chatText;
+    }
+
+    public Color getTextColor() {
+        return textColor;
+    }
+    public Color getUserColor() {
+        return userColor;
+    }
     public void setDos(DataOutputStream dos) {
         this.dos = dos;
     }
 
-    public void appendChatText(String text) {
-        this.chatText.append(text + '\n');
+    public void appendColorText(String text, Color color) {
+        String date = getFormatDate();
+        SimpleAttributeSet style = getAlignStyle(StyleConstants.ALIGN_LEFT, color, 13);
+        addColoredText(this.chatText, date + text + "\n", style);
     }
 
-    public void appendTimeText(String text) {
+    public void appendStyleText(String text, SimpleAttributeSet style) {
+        String date = getFormatDate();
+        addColoredText(this.chatText, date + text + "!!\n", style);
+    }
+
+    private void addColoredText(JTextPane pane, String text, SimpleAttributeSet style) {
+        StyledDocument doc = pane.getStyledDocument();
+        try {
+            doc.insertString(doc.getLength(), text, style);
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private SimpleAttributeSet getAlignStyle(int alignWay, Color color, int s) {
+        SimpleAttributeSet align = new SimpleAttributeSet();
+        StyleConstants.setAlignment(align, alignWay);
+        StyleConstants.setForeground(align, color);
+        StyleConstants.setFontSize(align, s);
+        return align;
+    }
+
+    private String getFormatDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("[MM/dd HH:mm] ");
         String date = dateFormat.format(new Date());
-        this.chatText.append(date + text + '\n');
+        return date;
     }
 
     public CommonChat() {
@@ -40,7 +86,7 @@ public class CommonChat extends JDialog {
         chatText.setAutoscrolls(true);
         chatText.setEditable(false);
 
-        JScrollPane scroll = new JScrollPane (chatText);
+        JScrollPane scroll = new JScrollPane(chatText);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
@@ -101,12 +147,11 @@ public class CommonChat extends JDialog {
     private void onSend() {
         try {
             dos.writeUTF(inputText.getText());
-            appendTimeText(inputText.getText());
+            appendColorText(inputText.getText(), getUserColor());
             inputText.setText("");
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private void onCancel() {
