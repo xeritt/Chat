@@ -1,14 +1,8 @@
 package org.chat.gui;
 
-import javax.crypto.SecretKey;
 import javax.swing.*;
 import java.awt.*;
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-
 import dorkbox.systemTray.SystemTray;
-import org.chat.security.AESUtil;
-import org.chat.security.RSAUtil;
 import org.drjekyll.fontchooser.FontDialog;
 
 /**
@@ -113,8 +107,8 @@ public class Gui {
 
         JMenuItem genKey = new JMenuItem("Set Encrypt");
         genKey.addActionListener(e->{
-            commonChat.setEncrypt(true);
-            commonChat.sendKeys();
+            commonChat.getSecurity().setEncrypt(true);
+            commonChat.getSecurity().sendKeys();
         });
         propMenu.add(genKey);
     }

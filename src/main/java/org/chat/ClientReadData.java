@@ -1,6 +1,5 @@
 package org.chat;
-import org.chat.gui.Gui;
-import org.chat.gui.Toast;
+import org.chat.gui.CommonChat;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -9,12 +8,12 @@ public class ClientReadData implements Runnable, Log{
 
     private Socket s;
     public boolean fRun = true;
-    private Gui gui;
+    private CommonChat chat;
 
 
-    public ClientReadData(Socket s, Gui gui) {
+    public ClientReadData(Socket s, CommonChat chat) {
         this.s = s;
-        this.gui = gui;
+        this.chat = chat;
     }
 
     public void stop() {
@@ -27,20 +26,19 @@ public class ClientReadData implements Runnable, Log{
             // read the message sent to this client
             while (fRun) {
                 String msg = dis.readUTF();
-                if (gui.getCommonChat().isEncrypt()){
+                if (chat.getSecurity().isEncrypt()){
                     if (msg.equals("/key")){
                         String keyEncode = dis.readUTF();
-                        gui.getCommonChat().setEncryptKey(keyEncode);
+                        chat.getSecurity().setEncryptKey(keyEncode);
                         continue;
                     } else {
-                        msg = gui.getCommonChat().getDecrypt(msg);
+                        msg = chat.getSecurity().getDecrypt(msg);
                     }
                 }
-                //gui.getCommonChat().appendChatText(msg);
-                gui.getCommonChat().appendColorText(msg, gui.getCommonChat().getTextColor());
-                //gui.getCommonChat().appendTimeText(msg);
-                if (gui.getCommonChat().isVisible()==false) {
-                    Toast.showToast("Message", msg, 5000);
+                chat.appendColorText(msg, chat.getTextColor());
+
+                if (chat.isVisible()==false) {
+                    chat.toast("Message", msg);
                 }
                 log(msg);
             }

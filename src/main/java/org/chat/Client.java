@@ -48,7 +48,7 @@ public class Client implements Log, Runnable {
                     clientSocket = connect(args);
                     DataOutputStream dos = new DataOutputStream(clientSocket.getOutputStream());
                     gui.getCommonChat().setDos(dos);
-                    readData = new ClientReadData(clientSocket, gui);
+                    readData = new ClientReadData(clientSocket, gui.getCommonChat());
                     readMessage = new Thread(readData);
                     readMessage.start();
                     gui.setStatus(gui.CONNECTED);
