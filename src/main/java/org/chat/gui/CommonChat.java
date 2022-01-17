@@ -1,11 +1,15 @@
 package org.chat.gui;
 
+import org.chat.security.RSAUtil;
+
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.security.KeyPair;
+import java.security.PublicKey;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
@@ -15,28 +19,32 @@ public class CommonChat extends JDialog {
     private JTextField inputText = new JTextField();
     //private JTextArea chatText = new JTextArea();
     private JTextPane chatText = new JTextPane();
+
     private Color textColor = Color.BLACK;
     private Color userColor = Color.RED;
 
     public final String FREE_CHAT = "Free Chat";
+    public static final String PUBLIC_KEY_INSTALL = "Public key from server install succcess.";
+    public static final String PUBLIC_KEY_NOINSTALL = "Error. Don't install encrypt key from.";
+
     private DataOutputStream dos;
+
+    private boolean encrypt = false;
+    private KeyPair writeKeys;
+    private PublicKey readKey;
 
     public DataOutputStream getDos() {
         return dos;
     }
-
     public void setTextColor(Color textColor) {
         this.textColor = textColor;
     }
-
     public void setUserColor(Color userColor) {
         this.userColor = userColor;
     }
-
     public JTextPane getChatText() {
         return chatText;
     }
-
     public Color getTextColor() {
         return textColor;
     }
@@ -47,17 +55,37 @@ public class CommonChat extends JDialog {
         this.dos = dos;
     }
 
+    public boolean isEncrypt() {return encrypt;}
+    public void setEncrypt(boolean encrypt) {this.encrypt = encrypt;}
+    public PublicKey getReadKey() {return readKey;}
+    public void setReadKey(PublicKey readKey) {this.readKey = readKey;}
+    public KeyPair getWriteKeys() {return writeKeys;}
+
     public void appendColorText(String text, Color color) {
         String date = getFormatDate();
         SimpleAttributeSet style = getAlignStyle(StyleConstants.ALIGN_LEFT, color, 13);
         addColoredText(this.chatText, date + text + "\n", style);
     }
 
+    public void setEncryptKey(String keyEncode) {
+        PublicKey pubKey = RSAUtil.getPublicKey(keyEncode);
+        String msg = PUBLIC_KEY_INSTALL;
+        if (pubKey!=null) {
+            setReadKey(pubKey);
+        } else {
+            msg = PUBLIC_KEY_NOINSTALL;
+        }
+
+        Toast.showToast("Encrypt keys", msg, 5000);
+        appendColorText(msg, getUserColor());
+    }
+
+    /*
     public void appendStyleText(String text, SimpleAttributeSet style) {
         String date = getFormatDate();
         addColoredText(this.chatText, date + text + "!!\n", style);
     }
-
+*/
     private void addColoredText(JTextPane pane, String text, SimpleAttributeSet style) {
         StyledDocument doc = pane.getStyledDocument();
         try {
@@ -144,12 +172,32 @@ public class CommonChat extends JDialog {
         setLocation(width - getWidth() / 2, height - getHeight() / 2);
     }
 
+
     private void onSend() {
         try {
-            dos.writeUTF(inputText.getText());
+            String cipherText = inputText.getText();
+            if (isEncrypt()){
+                cipherText = RSAUtil.encrypt(cipherText, readKey);
+            }
+            dos.writeUTF(cipherText);
             appendColorText(inputText.getText(), getUserColor());
             inputText.setText("");
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendKeys(){
+        try {
+            this.writeKeys = RSAUtil.generateKeyPair();
+            dos.writeUTF("/key");
+            String publicKey = RSAUtil.convertPublicKeyToString(writeKeys.getPublic());
+            dos.writeUTF(publicKey);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -158,4 +206,7 @@ public class CommonChat extends JDialog {
         setVisible(false);
     }
 
+    public String getDecrypt(String msg) throws Exception {
+        return RSAUtil.decrypt(msg, getWriteKeys().getPrivate());
+    }
 }

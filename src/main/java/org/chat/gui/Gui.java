@@ -1,8 +1,14 @@
 package org.chat.gui;
 
+import javax.crypto.SecretKey;
 import javax.swing.*;
 import java.awt.*;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+
 import dorkbox.systemTray.SystemTray;
+import org.chat.security.AESUtil;
+import org.chat.security.RSAUtil;
 import org.drjekyll.fontchooser.FontDialog;
 
 /**
@@ -45,6 +51,7 @@ public class Gui {
 
     public void setMenu(){
         JMenu menu = new JMenu("Main menu");
+        addPropMenu(menu);
 
         JMenuItem about = new JMenuItem("About");
         about.addActionListener(e->{
@@ -59,6 +66,16 @@ public class Gui {
         });
         menu.add(form);
 
+
+
+        JMenuItem exit = new JMenuItem("Exit");
+        exit.addActionListener(e->{System.exit(0);});
+        menu.add(exit);
+
+        tray.setMenu(menu);
+    }
+
+    private void addPropMenu(JMenu menu) {
         JMenu propMenu = new JMenu("Properties");
         menu.add(propMenu);
 
@@ -80,7 +97,7 @@ public class Gui {
             }
         });
         propMenu.add(color);
-        
+
         JMenuItem textColor = new JMenuItem("Set Text Color");
         textColor.addActionListener(e->{
             Color newColor = JColorChooser.showDialog(
@@ -94,11 +111,11 @@ public class Gui {
         });
         propMenu.add(textColor);
 
-        
-        JMenuItem exit = new JMenuItem("Exit");
-        exit.addActionListener(e->{System.exit(0);});
-        menu.add(exit);
-
-        tray.setMenu(menu);
+        JMenuItem genKey = new JMenuItem("Set Encrypt");
+        genKey.addActionListener(e->{
+            commonChat.setEncrypt(true);
+            commonChat.sendKeys();
+        });
+        propMenu.add(genKey);
     }
 }
