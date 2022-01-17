@@ -4,11 +4,11 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class ClientReadData implements Runnable, Log{
+public class ClientReadData implements Runnable{
 
-    private Socket s;
+    final private Socket s;
     public boolean fRun = true;
-    private CommonChat chat;
+    final private CommonChat chat;
 
 
     public ClientReadData(Socket s, CommonChat chat) {
@@ -37,21 +37,21 @@ public class ClientReadData implements Runnable, Log{
                 }
                 chat.appendColorText(msg, chat.getTextColor());
 
-                if (chat.isVisible()==false) {
+                if (!chat.isVisible()) {
                     chat.toast("Message", msg);
                 }
-                log(msg);
+                chat.log(msg);
             }
         } catch (IOException e) {
             e.printStackTrace();
-            log("Error read data");
+            chat.log("Error read data");
             fRun = false;
             //System.exit(1);
         } catch (Exception e) {
             e.printStackTrace();
-            log("Decrypt error");
+            chat.log("Decrypt error");
         }
-        log("Stop read data");
+        chat.log("Stop read data");
     }
 
 

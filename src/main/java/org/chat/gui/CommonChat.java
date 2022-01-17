@@ -1,5 +1,7 @@
 package org.chat.gui;
 
+import org.chat.Log;
+
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
@@ -9,20 +11,18 @@ import java.io.IOException;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
-public class CommonChat extends JDialog {
+public class CommonChat extends JDialog implements Log {
     public final String FREE_CHAT = "Free Chat";
     public static final int TOAST_DELAY = 5000;
     public static final String DATE_FORMAT = "[MM/dd HH:mm] ";
 
-    private JPanel contentPane = new JPanel();
-    private JButton buttonSend = new JButton("Send");
-    private JTextField inputText = new JTextField();
+    final private JTextField inputText;
     //private JTextArea chatText = new JTextArea();
-    private JTextPane chatText = new JTextPane();
+    final private JTextPane chatText;
     private Color textColor = Color.BLACK;
     private Color userColor = Color.RED;
     private DataOutputStream dos;
-    private Security security;
+    final private Security security;
 
     public Security getSecurity() {return security;}
     public DataOutputStream getDos() {return dos;}
@@ -36,7 +36,9 @@ public class CommonChat extends JDialog {
     public CommonChat() {
         security = new Security(this);
 
+        JPanel contentPane = new JPanel();
         contentPane.setLayout(new BorderLayout());
+        chatText = new JTextPane();
         chatText.setAutoscrolls(true);
         chatText.setEditable(false);
 
@@ -47,7 +49,9 @@ public class CommonChat extends JDialog {
 
         JPanel bottom = new JPanel();
         bottom.setLayout(new BorderLayout());
+        inputText = new JTextField();
         bottom.add(inputText, BorderLayout.CENTER);
+        JButton buttonSend = new JButton("Send");
         bottom.add(buttonSend, BorderLayout.EAST);
         contentPane.add(bottom, BorderLayout.SOUTH);
 
@@ -55,11 +59,7 @@ public class CommonChat extends JDialog {
         setModal(false);
         getRootPane().setDefaultButton(buttonSend);
 
-        buttonSend.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onSend();
-            }
-        });
+        buttonSend.addActionListener(e -> onSend());
 /*
         buttonCancel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -76,11 +76,13 @@ public class CommonChat extends JDialog {
         });
 
         // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        ActionListener action = e -> onCancel();
+
+        contentPane.registerKeyboardAction(
+                action,
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
+        );
         setTitle(FREE_CHAT);
         pack();
         setOnCenter();
@@ -97,8 +99,7 @@ public class CommonChat extends JDialog {
 
     private String getFormatDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        String date = dateFormat.format(new Date());
-        return date;
+        return dateFormat.format(new Date());
     }
 
     public void appendColorText(String text, Color color) {
@@ -140,8 +141,10 @@ public class CommonChat extends JDialog {
             inputText.setText("");
         } catch (IOException e) {
             e.printStackTrace();
+            log("Error write");
         } catch (Exception e) {
             e.printStackTrace();
+            log("Error encrypt");
         }
     }
 

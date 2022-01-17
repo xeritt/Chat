@@ -12,13 +12,14 @@ public class Security {
     private PublicKey readKey;
     public static final String PUBLIC_KEY_INSTALL = "Public key from server install succcess.";
     public static final String PUBLIC_KEY_NOINSTALL = "Error. Don't install encrypt key from.";
+    public static final String SECURITY_CHAT = "---==== Security Chat ====---";
 
     public boolean isEncrypt() {return encrypt;}
     public void setEncrypt(boolean encrypt) {this.encrypt = encrypt;}
     public PublicKey getReadKey() {return readKey;}
     public void setReadKey(PublicKey readKey) {this.readKey = readKey;}
     public KeyPair getWriteKeys() {return writeKeys;}
-    private CommonChat chat;
+    final private CommonChat chat;
 
     public Security(CommonChat chat) {
         this.chat = chat;
@@ -29,10 +30,10 @@ public class Security {
         String msg = PUBLIC_KEY_INSTALL;
         if (pubKey!=null) {
             setReadKey(pubKey);
+            chat.appendColorText(SECURITY_CHAT, chat.getUserColor());
         } else {
             msg = PUBLIC_KEY_NOINSTALL;
         }
-
         chat.toast("Encrypt keys", msg);
         chat.appendColorText(msg, chat.getUserColor());
     }
@@ -44,9 +45,13 @@ public class Security {
             String publicKey = RSAUtil.convertPublicKeyToString(writeKeys.getPublic());
             chat.getDos().writeUTF(publicKey);
         } catch (IOException e) {
+            setEncrypt(false);
             e.printStackTrace();
+            chat.log("Error write keys to client");
         } catch (Exception e) {
+            setEncrypt(false);
             e.printStackTrace();
+            chat.log("Error RSA keys");
         }
     }
 
