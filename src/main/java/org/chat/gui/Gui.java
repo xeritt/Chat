@@ -17,16 +17,15 @@ public class Gui {
     public final String LOGO_OFFLINE = "/logo_offline.png";
     public final String LOGO_ONLINE = "/logo_online.png";
     private final SystemTray tray;
-
     private CommonChat commonChat = new CommonChat();
 
     public CommonChat getCommonChat() {
         return commonChat;
     }
-
     public void setStatus(String status) {
         this.tray.setStatus(status);
     }
+    final private FontDialog fontDialog;
 
     public Gui() {
         System.out.println("Gui const");
@@ -35,6 +34,8 @@ public class Gui {
         setLogo(LOGO_OFFLINE);
         tray.setStatus(DISCONECTED);
         setMenu();
+        fontDialog = new FontDialog((Frame) null, "Select Font", true);
+        setOnCenter(fontDialog, 4);
     }
 
     public void setLogo(String logo) {
@@ -60,13 +61,32 @@ public class Gui {
         });
         menu.add(form);
 
-
-
         JMenuItem exit = new JMenuItem("Exit");
         exit.addActionListener(e->{System.exit(0);});
         menu.add(exit);
 
         tray.setMenu(menu);
+    }
+
+    static public void setOnCenter(Component component, int kof) {
+        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        final int width = screenSize.width / kof;
+        final int height = screenSize.height / kof;
+        component.setSize(width, height);
+        component.setLocation(width - component.getWidth() / kof, height - component.getHeight() / kof);
+    }
+
+    public void showFontDialog(Component component) {
+        //FontDialog dialog = new FontDialog((Frame) null, "Select Font", true);
+        fontDialog.setDefaultCloseOperation(2);
+        fontDialog.setSelectedFont(component.getFont());
+        fontDialog.setVisible(true);
+    }
+
+    public void setFont(Component component){
+        if (!fontDialog.isCancelSelected()) {
+            component.setFont(fontDialog.getSelectedFont());
+        }
     }
 
     private void addPropMenu(JMenu menu) {
@@ -75,7 +95,9 @@ public class Gui {
 
         JMenuItem prop = new JMenuItem("Set Font");
         prop.addActionListener(e->{
-            FontDialog.showDialog(commonChat.getChatText());
+            showFontDialog(commonChat.getChatText());
+            setFont(commonChat.getChatText());
+            //FontDialog.showDialog(commonChat.getChatText());
         });
         propMenu.add(prop);
 

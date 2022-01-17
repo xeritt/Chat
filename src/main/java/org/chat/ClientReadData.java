@@ -5,11 +5,9 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class ClientReadData implements Runnable{
-
     final private Socket s;
     public boolean fRun = true;
     final private CommonChat chat;
-
 
     public ClientReadData(Socket s, CommonChat chat) {
         this.s = s;
@@ -53,7 +51,4 @@ public class ClientReadData implements Runnable{
         }
         chat.log("Stop read data");
     }
-
-
-
 }

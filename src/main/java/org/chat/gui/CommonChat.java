@@ -17,7 +17,6 @@ public class CommonChat extends JDialog implements Log {
     public static final String DATE_FORMAT = "[MM/dd HH:mm] ";
 
     final private JTextField inputText;
-    //private JTextArea chatText = new JTextArea();
     final private JTextPane chatText;
     private Color textColor = Color.BLACK;
     private Color userColor = Color.RED;
@@ -58,15 +57,7 @@ public class CommonChat extends JDialog implements Log {
         setContentPane(contentPane);
         setModal(false);
         getRootPane().setDefaultButton(buttonSend);
-
         buttonSend.addActionListener(e -> onSend());
-/*
-        buttonCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        });
-*/
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(HIDE_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -77,7 +68,6 @@ public class CommonChat extends JDialog implements Log {
 
         // call onCancel() on ESCAPE
         ActionListener action = e -> onCancel();
-
         contentPane.registerKeyboardAction(
                 action,
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
@@ -85,7 +75,8 @@ public class CommonChat extends JDialog implements Log {
         );
         setTitle(FREE_CHAT);
         pack();
-        setOnCenter();
+        Gui.setOnCenter(this, 2);
+        setVisible(true);
        // System.out.println("Chat constructor");
     }
 
@@ -107,12 +98,7 @@ public class CommonChat extends JDialog implements Log {
         SimpleAttributeSet style = getAlignStyle(StyleConstants.ALIGN_LEFT, color, 13);
         addColoredText(this.chatText, date + text + "\n", style);
     }
-    /*
-    public void appendStyleText(String text, SimpleAttributeSet style) {
-        String date = getFormatDate();
-        addColoredText(this.chatText, date + text + "!!\n", style);
-    }
-*/
+
     private void addColoredText(JTextPane pane, String text, SimpleAttributeSet style) {
         StyledDocument doc = pane.getStyledDocument();
         try {
@@ -120,14 +106,6 @@ public class CommonChat extends JDialog implements Log {
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
-    }
-
-    private void setOnCenter() {
-        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        final int width = screenSize.width / 2;
-        final int height = screenSize.height / 2;
-        setSize(width, height);
-        setLocation(width - getWidth() / 2, height - getHeight() / 2);
     }
 
     private void onSend() {
