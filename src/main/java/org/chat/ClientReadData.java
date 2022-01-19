@@ -22,16 +22,18 @@ public class ClientReadData implements Runnable{
     public void run() {
         try (DataInputStream dis = new DataInputStream(s.getInputStream())) {
             // read the message sent to this client
+            chat.getSecurity().sendKeys();
             while (fRun) {
                 String msg = dis.readUTF();
+                System.out.println(msg);
+                if (msg.equals("/key")){
+                    String keyEncode = dis.readUTF();
+                    chat.getSecurity().setEncryptKey(keyEncode);
+                    chat.getSecurity().setEncrypt(true);
+                    continue;
+                }
                 if (chat.getSecurity().isEncrypt()){
-                    if (msg.equals("/key")){
-                        String keyEncode = dis.readUTF();
-                        chat.getSecurity().setEncryptKey(keyEncode);
-                        continue;
-                    } else {
                         msg = chat.getSecurity().getDecrypt(msg);
-                    }
                 }
                 chat.appendColorText(msg, chat.getTextColor());
 

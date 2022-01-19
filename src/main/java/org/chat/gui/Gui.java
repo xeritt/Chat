@@ -129,12 +129,14 @@ public class Gui {
             }
         });
         propMenu.add(textColor);
-
+/*
         JMenuItem genKey = new JMenuItem("Set Encrypt");
         genKey.addActionListener(e->{
             commonChat.getSecurity().setEncrypt(true);
             commonChat.getSecurity().sendKeys();
         });
         propMenu.add(genKey);
+
+ */
     }
 }

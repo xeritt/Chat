@@ -45,6 +45,7 @@ public class Security {
             chat.getDos().writeUTF("/key");
             String publicKey = RSAUtil.convertPublicKeyToString(writeKeys.getPublic());
             chat.getDos().writeUTF(publicKey);
+
         } catch (IOException e) {
             setEncrypt(false);
             e.printStackTrace();
