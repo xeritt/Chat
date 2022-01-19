@@ -1,4 +1,4 @@
-# Desktop chat client (Windows(10, 11), Linux)
+# Desktop chat client Windows , Linux
 RSA security chat client.
 
 **Build**
