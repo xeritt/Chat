@@ -2,7 +2,10 @@ package org.chat.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.security.NoSuchAlgorithmException;
+
 import dorkbox.systemTray.SystemTray;
+import org.chat.security.RSAUtil;
 import org.drjekyll.fontchooser.FontDialog;
 
 /**

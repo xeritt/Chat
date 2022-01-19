@@ -34,7 +34,8 @@ public class Security {
         } else {
             msg = PUBLIC_KEY_NOINSTALL;
         }
-        chat.toast("Encrypt keys", msg);
+        if (!chat.isVisible())
+            chat.toast("Encrypt keys", msg);
         chat.appendColorText(msg, chat.getUserColor());
     }
 
@@ -62,5 +63,6 @@ public class Security {
     public String getEncrypt(String msg) throws Exception {
         return RSAUtil.encrypt(msg, getReadKey());
     }
+
 
 }

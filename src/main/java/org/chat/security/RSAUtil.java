@@ -82,4 +82,12 @@ public class RSAUtil {
         String encodedKey = Base64.getEncoder().encodeToString(rawData);
         return encodedKey;
     }
+
+    public static String getMD5(String pass) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(pass.getBytes());
+        byte[] digest = md.digest();
+        String str = Base64.getEncoder().encodeToString(digest);
+        return str;
+    }
 }
