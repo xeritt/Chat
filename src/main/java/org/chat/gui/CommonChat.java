@@ -115,7 +115,10 @@ public class CommonChat extends JDialog implements Log {
                 cipherText = getSecurity().getEncrypt(cipherText);
             }
             dos.writeUTF(cipherText);
-            appendColorText(inputText.getText(), getUserColor());
+            String text = inputText.getText();
+            if (isAuthCommand(text)) {
+                appendColorText(inputText.getText(), getUserColor());
+            }
             inputText.setText("");
         } catch (IOException e) {
             e.printStackTrace();
@@ -124,6 +127,10 @@ public class CommonChat extends JDialog implements Log {
             e.printStackTrace();
             log("Error encrypt");
         }
+    }
+
+    private boolean isAuthCommand(String text) {
+        return text.indexOf("/register") == -1 && text.indexOf("/login") == -1;
     }
 
 
