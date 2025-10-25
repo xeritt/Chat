@@ -6,7 +6,9 @@ import java.security.NoSuchAlgorithmException;
 
 import dorkbox.systemTray.SystemTray;
 import org.chat.security.RSAUtil;
-import org.drjekyll.fontchooser.FontDialog;
+
+import static org.chat.gui.JFontChooser.CANCEL_OPTION;
+//import org.drjekyll.fontchooser.FontDialog;
 
 /**
  * dorkbox.systemTray.SystemTray
@@ -28,7 +30,8 @@ public class Gui {
     public void setStatus(String status) {
         this.tray.setStatus(status);
     }
-    final private FontDialog fontDialog;
+    //final private FontDialog fontDialog;
+    final private JFontChooser fontDialog;
 
     public Gui() {
         System.out.println("Gui const");
@@ -37,7 +40,8 @@ public class Gui {
         setLogo(LOGO_OFFLINE);
         tray.setStatus(DISCONECTED);
         setMenu();
-        fontDialog = new FontDialog((Frame) null, "Select Font", true);
+        //fontDialog = new FontDialog((Frame) null, "Select Font", true);
+        fontDialog = new JFontChooser();//
         setOnCenter(fontDialog, 4);
     }
 
@@ -81,13 +85,15 @@ public class Gui {
 
     public void showFontDialog(Component component) {
         //FontDialog dialog = new FontDialog((Frame) null, "Select Font", true);
-        fontDialog.setDefaultCloseOperation(2);
+        //fontDialog.setDefaultCloseOperation(2);
         fontDialog.setSelectedFont(component.getFont());
         fontDialog.setVisible(true);
+        fontDialog.showDialog((Frame) null);
     }
 
     public void setFont(Component component){
-        if (!fontDialog.isCancelSelected()) {
+        if(fontDialog.dialogResultValue != CANCEL_OPTION){
+        //if (!fontDialog.isCancelSelected()) {
             component.setFont(fontDialog.getSelectedFont());
         }
     }
