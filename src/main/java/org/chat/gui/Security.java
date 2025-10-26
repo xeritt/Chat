@@ -22,11 +22,6 @@ public class Security implements Log {
     public PublicKey getReadKey() {return readKey;}
     public void setReadKey(PublicKey readKey) {this.readKey = readKey;}
     public KeyPair getWriteKeys() {return writeKeys;}
-    //final private CommonChat chat;
-
-    //public Security(CommonChat chat) {
-        //this.chat = chat;
-    //}
 
     public String setEncryptKey(String keyEncode) {
         PublicKey pubKey = RSAUtil.getPublicKey(keyEncode);
@@ -34,24 +29,16 @@ public class Security implements Log {
         if (pubKey!=null) {
             setReadKey(pubKey);
             msg = SECURITY_CHAT;
-            //chat.onRead(SECURITY_CHAT);
-            //chat.appendColorText(SECURITY_CHAT, chat.getUserColor());
         } else {
             msg = PUBLIC_KEY_NOINSTALL;
         }
-        //if (!chat.isVisible())
-        //    chat.toast("Encrypt keys", msg);
-        //chat.onRead(msg);
         return msg;
-        //chat.appendColorText(msg, chat.getUserColor());
     }
 
     public String generateKeys(){
         try {
             this.writeKeys = RSAUtil.generateKeyPair();
-            //chat.getDos().writeUTF("/key");
             String publicKey = RSAUtil.convertPublicKeyToString(writeKeys.getPublic());
-            //chat.getDos().writeUTF(publicKey);
             return publicKey;
         }
         catch (NoSuchAlgorithmException e) {
@@ -64,25 +51,6 @@ public class Security implements Log {
             throw new RuntimeException(e);
         }
     }
-    /*
-    public String sendKeys(){
-        try {
-            this.writeKeys = RSAUtil.generateKeyPair();
-            //chat.getDos().writeUTF("/key");
-            String publicKey = RSAUtil.convertPublicKeyToString(writeKeys.getPublic());
-            //chat.getDos().writeUTF(publicKey);
-            return publicKey;
-        } catch (IOException e) {
-            setEncrypt(false);
-            e.printStackTrace();
-            log("Error write keys to client");
-        } catch (Exception e) {
-            setEncrypt(false);
-            e.printStackTrace();
-            log("Error RSA keys");
-        }
-        return "";
-    }*/
 
     public String getDecrypt(String msg) throws Exception {
         return RSAUtil.decrypt(msg, getWriteKeys().getPrivate());
@@ -91,6 +59,4 @@ public class Security implements Log {
     public String getEncrypt(String msg) throws Exception {
         return RSAUtil.encrypt(msg, getReadKey());
     }
-
-
 }

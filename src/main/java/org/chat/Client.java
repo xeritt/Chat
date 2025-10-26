@@ -53,16 +53,11 @@ public class Client implements Log, Runnable {
                     log("Try to connect...");
                     clientSocket = connect(args);
                     DataOutputStream dos = new DataOutputStream(clientSocket.getOutputStream());
-                    //gui.getCommonChat().setDos(dos);
-                    //readData = new ClientReadData(clientSocket, gui.getCommonChat());
                     chat.setDos(dos);
-                    //this.chat = new CommonChat(security, dos);
                     readData = new ClientReadData(clientSocket, chat);
                     readMessage = new Thread(readData);
                     readMessage.start();
                     chat.setStatusConnected();
-                    //gui.setStatus(gui.CONNECTED);
-                    //gui.setLogo(gui.LOGO_ONLINE);
                 }
 
                 Thread.sleep(SLEEP);
