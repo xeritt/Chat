@@ -1,7 +1,6 @@
 package org.chat;
 
 import org.chat.gui.CommonChat;
-import org.chat.gui.Gui;
 import org.chat.gui.Security;
 
 import java.io.*;
