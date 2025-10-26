@@ -1,5 +1,7 @@
 package org.chat.gui;
 
+import org.chat.IChat;
+import org.chat.IGuiChat;
 import org.chat.Log;
 
 import javax.swing.*;
@@ -11,7 +13,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
-public class CommonChat extends JDialog implements Log {
+public class CommonChat extends JDialog implements IChat, IGuiChat {
     public final String FREE_CHAT = "Free Chat";
     public static final int TOAST_DELAY = 5000;
     public static final String DATE_FORMAT = "[MM/dd HH:mm] ";
@@ -22,18 +24,23 @@ public class CommonChat extends JDialog implements Log {
     private Color userColor = Color.RED;
     private DataOutputStream dos;
     final private Security security;
+    private Gui gui;// = new Gui();
 
-    public Security getSecurity() {return security;}
+    //public Security getSecurity() {return security;}
     public DataOutputStream getDos() {return dos;}
     public void setTextColor(Color textColor) {this.textColor = textColor;}
     public void setUserColor(Color userColor) {this.userColor = userColor;}
+
     public JTextPane getChatText() {return chatText;}
     public Color getTextColor() {return textColor;}
     public Color getUserColor() {return userColor;}
     public void setDos(DataOutputStream dos) {this.dos = dos;}
 
-    public CommonChat() {
-        security = new Security(this);
+    public CommonChat(Security security, DataOutputStream dos) {
+        this.security = security;
+        this.dos = dos;
+        this.gui = new Gui(this);
+        //security = new Security();
 
         JPanel contentPane = new JPanel();
         contentPane.setLayout(new BorderLayout());
@@ -80,6 +87,14 @@ public class CommonChat extends JDialog implements Log {
        // System.out.println("Chat constructor");
     }
 
+    public Gui getGui() {
+        return gui;
+    }
+
+    public void setGui(Gui gui) {
+        this.gui = gui;
+    }
+
     private SimpleAttributeSet getAlignStyle(int alignWay, Color color, int s) {
         SimpleAttributeSet align = new SimpleAttributeSet();
         StyleConstants.setAlignment(align, alignWay);
@@ -108,11 +123,11 @@ public class CommonChat extends JDialog implements Log {
         }
     }
 
-    private void onSend() {
+    public void onSend() {
         try {
             String cipherText = inputText.getText();
-            if (getSecurity().isEncrypt()){
-                cipherText = getSecurity().getEncrypt(cipherText);
+            if (security.isEncrypt()){
+                cipherText = security.getEncrypt(cipherText);
             }
             dos.writeUTF(cipherText);
             String text = inputText.getText();
@@ -129,6 +144,15 @@ public class CommonChat extends JDialog implements Log {
         }
     }
 
+    @Override
+    public void onRead(String text) {
+        appendColorText(text, getTextColor());
+        if (!isVisible()) {
+            toast("Message", text);
+        }
+        log(text);
+    }
+
     private boolean isAuthCommand(String text) {
         return text.indexOf("/register") == -1 && text.indexOf("/login") == -1;
     }
@@ -140,6 +164,24 @@ public class CommonChat extends JDialog implements Log {
 
     public void toast(String title, String msg){
         Toast.showToast(title, msg, TOAST_DELAY);
+    }
+
+    public void setStatusConnected(){
+        Gui gui = this.getGui();
+        gui.setStatus(gui.CONNECTED);
+        gui.setLogo(gui.LOGO_ONLINE);
+    }
+
+    public void setStatusDisconnected() throws IOException {
+        Gui gui = this.getGui();
+        this.getDos().close();
+        gui.setStatus(gui.DISCONECTED);
+        gui.setLogo(gui.LOGO_OFFLINE);
+    }
+
+    @Override
+    public Security getSecurity() {
+        return security;
     }
 
 }

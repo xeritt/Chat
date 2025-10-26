@@ -1,6 +1,9 @@
 package org.chat;
 
+import org.chat.gui.CommonChat;
 import org.chat.gui.Gui;
+import org.chat.gui.Security;
+
 import java.io.*;
 import java.net.*;
 
@@ -12,7 +15,8 @@ public class Client implements Log, Runnable {
     private InetAddress ip = null;
     private boolean fConnected = false;
     private String[] args = null;
-    private Gui gui = new Gui();
+    private IChat chat;
+    private Security security;
 
     public Client(String[] args) {
         this.args = args;
@@ -41,27 +45,31 @@ public class Client implements Log, Runnable {
     @Override
     public void run() {
         ClientReadData readData = null;
+        this.security = new Security();
+        this.chat = new CommonChat(security, null);
         while (true) {
             try {
                 if (fConnected == false) {
                     log("Try to connect...");
                     clientSocket = connect(args);
                     DataOutputStream dos = new DataOutputStream(clientSocket.getOutputStream());
-                    gui.getCommonChat().setDos(dos);
-                    readData = new ClientReadData(clientSocket, gui.getCommonChat());
+                    //gui.getCommonChat().setDos(dos);
+                    //readData = new ClientReadData(clientSocket, gui.getCommonChat());
+                    chat.setDos(dos);
+                    //this.chat = new CommonChat(security, dos);
+                    readData = new ClientReadData(clientSocket, chat);
                     readMessage = new Thread(readData);
                     readMessage.start();
-                    gui.setStatus(gui.CONNECTED);
-                    gui.setLogo(gui.LOGO_ONLINE);
+                    chat.setStatusConnected();
+                    //gui.setStatus(gui.CONNECTED);
+                    //gui.setLogo(gui.LOGO_ONLINE);
                 }
 
                 Thread.sleep(SLEEP);
 
                 if (readData.fRun == false) {
                     fConnected = false;
-                    gui.getCommonChat().getDos().close();
-                    gui.setStatus(gui.DISCONECTED);
-                    gui.setLogo(gui.LOGO_OFFLINE);
+                    chat.setStatusDisconnected();
                     log("Disconnected.");
                 }
 

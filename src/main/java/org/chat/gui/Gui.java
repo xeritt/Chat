@@ -5,6 +5,8 @@ import java.awt.*;
 import java.security.NoSuchAlgorithmException;
 
 import dorkbox.systemTray.SystemTray;
+import org.chat.IChat;
+import org.chat.IGuiChat;
 import org.chat.security.RSAUtil;
 
 import static org.chat.gui.JFontChooser.CANCEL_OPTION;
@@ -22,7 +24,7 @@ public class Gui {
     public final String LOGO_OFFLINE = "/logo_offline.png";
     public final String LOGO_ONLINE = "/logo_online.png";
     private final SystemTray tray;
-    private CommonChat commonChat = new CommonChat();
+    private CommonChat commonChat;//= new CommonChat();
 
     public CommonChat getCommonChat() {
         return commonChat;
@@ -33,7 +35,8 @@ public class Gui {
     //final private FontDialog fontDialog;
     final private JFontChooser fontDialog;
 
-    public Gui() {
+    public Gui(CommonChat commonChat) {
+        this.commonChat = commonChat;
         System.out.println("Gui const");
         tray = SystemTray.get();
         tray.installShutdownHook();

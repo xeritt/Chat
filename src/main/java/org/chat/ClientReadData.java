@@ -1,16 +1,16 @@
 package org.chat;
-import org.chat.gui.CommonChat;
+import org.chat.gui.Security;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
 public class ClientReadData implements Runnable{
-    final private Socket s;
+    final private Socket socket;
     public boolean fRun = true;
-    final private CommonChat chat;
-
-    public ClientReadData(Socket s, CommonChat chat) {
-        this.s = s;
+    final private IChat chat;
+    public ClientReadData(Socket socket, IChat chat) throws IOException {
+        this.socket = socket;
         this.chat = chat;
     }
 
@@ -18,29 +18,39 @@ public class ClientReadData implements Runnable{
         fRun = false;
     }
 
+    public void sendKeys(String publicKey){
+        try {
+            chat.getDos().writeUTF("/key");
+            chat.getDos().writeUTF(publicKey);
+        } catch (IOException e) {
+            chat.getSecurity().setEncrypt(false);
+            chat.log("Error write keys to client");
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public void run() {
-        try (DataInputStream dis = new DataInputStream(s.getInputStream())) {
+        try (DataInputStream dis = new DataInputStream(socket.getInputStream())) {
             // read the message sent to this client
-            chat.getSecurity().sendKeys();
+            Security security = chat.getSecurity();
+            String publicKey = security.generateKeys();
+            if (publicKey.equals("")) throw new IOException("Error public key");
+            sendKeys(publicKey);
             while (fRun) {
                 String msg = dis.readUTF();
                 System.out.println(msg);
                 if (msg.equals("/key")){
                     String keyEncode = dis.readUTF();
-                    chat.getSecurity().setEncryptKey(keyEncode);
-                    chat.getSecurity().setEncrypt(true);
+                    String result = security.setEncryptKey(keyEncode);
+                    chat.onRead(result);
+                    security.setEncrypt(true);
                     continue;
                 }
-                if (chat.getSecurity().isEncrypt()){
-                        msg = chat.getSecurity().getDecrypt(msg);
+                if (security.isEncrypt()){
+                        msg = security.getDecrypt(msg);
                 }
-                chat.appendColorText(msg, chat.getTextColor());
-
-                if (!chat.isVisible()) {
-                    chat.toast("Message", msg);
-                }
-                chat.log(msg);
+                chat.onRead(msg);
             }
         } catch (IOException e) {
             e.printStackTrace();
